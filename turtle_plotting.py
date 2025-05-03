@@ -79,6 +79,6 @@ def draw_a_cell():
 tur.TurtleScreen._RUNNING = True
 tur.setup(width = 0.5, height = 0.5, startx = 10, starty = 10)
 
-draw_a_cell()
+draw_spiral()
 
 tur.done()

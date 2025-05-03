@@ -1,15 +1,19 @@
 # voronoi-cells
+
+honeycomb.py: standalone program to display some nested hexagons
+quadcircles.py: standalone program with some cool lil circles
+turtle_plotting.py: standalone program with basic plotting at work
+plot_voronoi.py: black and white voronoi diagram plotting!
+
 experiments with voronoi cells in python with inspiration below
 
 3 tier voronoi?
 
 ![image](https://github.com/user-attachments/assets/9a243131-c7b7-437e-88c2-23e28117d51b)
 
-
 water voronoi?
 
 ![image](https://github.com/user-attachments/assets/10c13f93-a870-4ab7-b6cc-b8dbd0354696)
-
 
 psychedelic space voronoi?
 
