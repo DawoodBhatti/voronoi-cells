@@ -5,11 +5,16 @@ import math
 import random
 from voronoi_cells import generate_voronoi_cells
 
-#receive cell vertices from pseudocode.py
+#receive cell vertices from voronoi_cells.py
 #draw multiple cells/shapes almost simultaneously
 
+
+#TODO: add some colouring into this
+#TODO: add voronoi leevels to this, e.g. remove some points and replot with different filters, colours, etc
+#TODO: mess around with fitting ellipsoids to shapes?
+#TODO: translate to gdscript
+
 class TurtleDrawing:
-    #TODO: add interpolation function to increase the number of points in the vertices
     def __init__(self, name=None, vertices=None):
         if vertices is None:
             self.vertices = [(-100, 10), (117, -15), (55, 28)]  # Default empty coordinates
@@ -23,7 +28,7 @@ class TurtleDrawing:
         self.turtle_object.speed("fastest")
         self.turtle_object.width(2)
         self.turtle_object.color("black")
-        self.vertex_counter = 0
+        self.vertex_counter = 1#startvertextcounteratonebecauseweteleporttothispositionanyway
         self.completed = False
 
 
@@ -75,7 +80,7 @@ def process_queue():
 
 
 def run(shape_vertices):
-    """main execution function to set up, run threads, and process queue."""
+    """main execution function to set up, run threads, and process queue"""
     
     #close existing windows and set up
     turtle.TurtleScreen._RUNNING = True
@@ -89,7 +94,7 @@ def run(shape_vertices):
         if len(i) > max_points:
             max_points = len(i)
     
-    #set up graphics queue with (currently) single thread
+    #set up graphics queue 
     global graphics
     graphics = queue.Queue(3)  #size of function queue
     
@@ -105,5 +110,5 @@ def run(shape_vertices):
 
 
 #run code
-voronoi_data, seed_points = generate_voronoi_cells(x_range=1000, y_range=500, num_points=500, offset_x=-500, offset_y=-250)
+voronoi_data, seed_points = generate_voronoi_cells(x_range=1000, y_range=500, num_points=50, offset_x=-500, offset_y=-250)
 run(voronoi_data)
