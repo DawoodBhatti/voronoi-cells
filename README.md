@@ -1,5 +1,5 @@
 # voronoi-cells
-experiments with voronoi cells in python
+experiments with voronoi cells in python with inspiration below
 
 3 tier voronoi?
 
