@@ -64,12 +64,12 @@ def generate_tessellated_hexagons(size=35):
     screen_width = turtle.window_width()
     screen_height = turtle.window_height()
 
-    # Compute max rows & cols based on the screen size
-    cols = int(screen_width / (size * 1.5))  # Horizontal hexagon spacing
-    rows = int(screen_height / (size * math.sqrt(3)))  # Vertical hexagon spacing
+    h_spacing = 2 * size * math.cos(math.radians(30)) # Correct hex width spacing
+    v_spacing = 1.5 * size  # Correct hex height spacing
 
-    h_spacing = size * 1.5  # Correct hex width spacing
-    v_spacing = size * math.sqrt(3)  # Correct hex height spacing
+    # Compute max rows & cols based on the screen size
+    cols = math.ceil(screen_width / (v_spacing)) + 3 # Horizontal hexagon spacing
+    rows = math.ceil(screen_height / (h_spacing)) + 1 # Vertical hexagon spacing
 
     # Adjust starting position to **bottom-left** of the screen
     start_x = -screen_width / 2 + size  # Shift left to start at bottom
@@ -137,6 +137,7 @@ def run():
     """Main execution function to set up, run threads, and process queue."""
     # Generate hexagon vertices
     shape_vertices = generate_tessellated_hexagons()
+    shape_vertices.sort(key=lambda hex: hex[0][1])  # Sort by y-position (first vertex in each hexagon)
     random.shuffle(shape_vertices)
     number_of_shapes = len(shape_vertices)
     max_points = 0
