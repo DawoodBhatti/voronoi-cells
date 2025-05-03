@@ -37,7 +37,6 @@ class TurtleDrawing:
 
             # Movement and logging inside the same lambda
             graphics.put(lambda x=x, y=y: (self.turtle_object.goto(x, y), print(self.turtle_name, " moved to:", x, ", ", y)))
-
             self.vertex_counter += 1
 
         elif self.vertex_counter == len(self.vertices):
