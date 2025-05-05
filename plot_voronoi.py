@@ -10,8 +10,9 @@ from voronoi_cells import generate_voronoi_cells
 
 
 #TODO: add some colouring into this
-#TODO: add voronoi leevels to this, e.g. remove some points and replot with different filters, colours, etc
+#TODO: add voronoi levels to this, e.g. remove some points and replot with different filters, colours, etc
 #TODO: mess around with fitting ellipsoids to shapes?
+#TODO: try creating a shading profile
 #TODO: translate to gdscript
 
 class TurtleDrawing:
@@ -28,7 +29,7 @@ class TurtleDrawing:
         self.turtle_object.speed("fastest")
         self.turtle_object.width(2)
         self.turtle_object.color("black")
-        self.vertex_counter = 1#startvertextcounteratonebecauseweteleporttothispositionanyway
+        self.vertex_counter = 1
         self.completed = False
 
 
