@@ -25,7 +25,11 @@ class TurtleDrawing:
         #set turtle up at first point of shape
         self.turtle_object = turtle.Turtle()
         self.turtle_name = name
+                
+        # Hide turtle before setting position
+        self.turtle_object.hideturtle()
         self.turtle_object.teleport(self.vertices[0][0], self.vertices[0][1])
+        self.turtle_object.showturtle()
         self.turtle_object.speed("fastest")
         self.turtle_object.width(2)
         self.turtle_object.color("black")
@@ -112,4 +116,5 @@ def run(shape_vertices):
 
 #run code
 voronoi_data, seed_points = generate_voronoi_cells(x_range=1000, y_range=500, num_points=50, offset_x=-500, offset_y=-250)
+
 run(voronoi_data)
