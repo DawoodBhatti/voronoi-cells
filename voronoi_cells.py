@@ -23,10 +23,10 @@ def generate_voronoi_cells(x_range, y_range, num_points, offset_x=0, offset_y=0,
             seed_points is the list of seed points used for generation.
     """
 
-    # Step 1: Instantiate the PointGenerator with specified parameters
-    point_generator = PointGenerator(x_range, y_range, num_points)
+    # Instantiate the PointGenerator with specified parameters
+    point_generator = PointGenerator(x_range, y_range, num_points, offset_x, offset_y)
 
-    # Step 2: Choose a distribution method
+    # Choose a distribution method
     distributions = {
         "halton": point_generator.halton_samples,
         "fibonacci": point_generator.fibonacci_spiral,
@@ -34,15 +34,12 @@ def generate_voronoi_cells(x_range, y_range, num_points, offset_x=0, offset_y=0,
         "random": point_generator.random_distribution
     }
     
-    seed_points = distributions.get(distribution_method, point_generator.halton_samples)()
+    seed_points = distributions.get(distribution_method, distributions[distribution_method])()
 
-    # Step 3: Instantiate VoronoiGenerator with selected bounding shape
+    # Instantiate VoronoiGenerator with selected bounding shape
     voronoi = VoronoiGenerator(seed_points, bounding_shape=bounding_shape, custom_shape=custom_shape)
 
-    # Step 4: Apply an optional offset
-    offset_cells = voronoi.apply_offset(dx=offset_x, dy=offset_y)
-
-    # Step 5: Convert dictionary format to list of vertices
-    formatted_cells = voronoi.dictionary_to_list(offset_cells)
+    # Convert dictionary format to list of vertices
+    formatted_cells = voronoi.dictionary_to_list(voronoi.voronoi_cells()) 
 
     return formatted_cells, seed_points

@@ -104,14 +104,6 @@ class VoronoiGenerator:
         return {p: self.compute_voronoi_cell(p, bounding_region) for p in self.points}
 
 
-    def apply_offset(self, dx=0, dy=0):
-        """Apply an (x, y) offset to all Voronoi cells."""
-        return {
-            (p[0] + dx, p[1] + dy): [(v[0] + dx, v[1] + dy) for v in vertices]
-            for p, vertices in self.voronoi_cells().items()
-        }
-
-
     def remove_duplicate_vertices(self, cell):
         """Remove duplicate or near-identical vertices."""
         cleaned_cell = []
