@@ -8,7 +8,8 @@ from voronoi_cells import generate_voronoi_cells
 #receive cell vertices from voronoi_cells.py
 #draw multiple cells/shapes almost simultaneously
 
-
+#TODO: fix dists and get colour in with triangles maybe?
+#TODO: structre program to use different distributions: random, Halton Sequence, fib sequence
 #TODO: add some colouring into this
 #TODO: add voronoi levels to this, e.g. remove some points and replot with different filters, colours, etc
 #TODO: mess around with fitting ellipsoids to shapes?
@@ -115,6 +116,5 @@ def run(shape_vertices):
 
 
 #run code
-voronoi_data, seed_points = generate_voronoi_cells(x_range=1000, y_range=500, num_points=50, offset_x=-500, offset_y=-250)
-
+voronoi_data, seed_points = generate_voronoi_cells(x_range=1000, y_range=500, num_points=120, offset_x=-500, offset_y=-250)
 run(voronoi_data)
