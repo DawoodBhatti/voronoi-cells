@@ -1,7 +1,7 @@
 import numpy as np
 
 class VoronoiGenerator:
-    def __init__(self, points, padding=50, bounding_shape="rectangle", custom_shape=None):
+    def __init__(self, points, padding=10, bounding_shape="rectangle", custom_shape=None):
         """
         Initialize VoronoiGenerator.
 
