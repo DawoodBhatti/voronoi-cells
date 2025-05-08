@@ -20,7 +20,7 @@ class PointGenerator:
     def fibonacci_spiral(self):
         """Generate Fibonacci spiral points."""
         
-        #fibonacci is centere without any offsets
+        #fibonacci is centered without any offsets
         self.offset_x = 0
         self.offset_y = 0
         

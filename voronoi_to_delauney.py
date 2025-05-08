@@ -17,15 +17,18 @@ class quadrant:
             self.midpoint = midpoint
             
         self.neighbours = []
-    
+        self.contained_points = []
 
+
+#TODO: might want to reconsider objects for each point? 
+# instead implement some container within the quadrant class?
 class point:
     def __init__(self):
         non_boundary_edges = 0 
         neighbours = []
 
 
-# divide grid into quandrants, each with some midpoint, to fill a bounding rectangle
+# divide grid into quandrants, each with some midpoint, to fill some bounding rectangle or square
 def generate_quadrants(voronoi_data):
     min_x = 0
     max_x = 0
@@ -45,25 +48,29 @@ def generate_quadrants(voronoi_data):
             if y < min_y:
                 min_y = y
             elif y > max_y:
-                max_y =y
+                max_y = y
     
     # use shortest side / sqrt of number of points to calculate length of quadrant squares (might need scaling)
+    scaling = 2
     quad_length = min([(max_x - min_x), (max_y - min_y)]) / round(sqrt(len(voronoi_data)))
+    quad_length = quad_length * scaling
     num_rows = ceil((max_x - min_x)/quad_length) 
     num_cols = ceil((max_y - min_y)/quad_length)
     
-    print("quad length: ", quad_length)
-    print("num rows: ", num_rows)
-    print("num cols: ", num_cols)
+    # offsets to match to our bounding rect/square as well as centering for overlaps
+    x_offset = min_x
+    x_offset -= ((quad_length * num_rows) - (max_x - min_x)) / 2
+    y_offset = min_y
+    #(max_y - min_y) / 2
+    y_offset -= ((quad_length * num_cols) - (max_y - min_y)) / 2
     
-    # create quadrants 
+    # initialise and create quadrants 
     quadrants = empty((num_rows, num_cols), quadrant)
-    
     for r in range(num_rows):
         for c in range(num_cols):
             q = quadrant(quad_length, 
-                         ((r * quad_length/2) + quad_length/2,
-                          (c * quad_length/2) + quad_length/2)
+                         ((r * quad_length) + quad_length/2 + x_offset  ,
+                          (c * quad_length) + quad_length/2 + y_offset )
                           )
     
             quadrants[r][c] = q
@@ -84,12 +91,13 @@ def generate_quadrants(voronoi_data):
     
 # loop over each point:
     # loop over each quadrant
-        # if the distance from the point to the quadrant midpoint is less than size above
+        # if the distance from the point to the quadrant midpoint is less than length of quadrant
+        # TODO: there might be an even quicker way to calculate this with some rounded division? i.e. divide the x and y coordinates and pull out the integer to find the cube bin it belongs in
             #  add point to that quadrant's list
     
-            # calculate the number of neighbours of point:
+            # calculate the number of neighbours of point i.e.  number of non boundary edges:
                 # the corner points can be spotted easily as can edge pieces
-                # just calculate the number of non boundary edges
+
 
 # loop over each quadrant
     # loop over each point inside quadrant
