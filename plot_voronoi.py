@@ -3,7 +3,7 @@ import threading
 import turtle
 import time
 from voronoi_cells import generate_voronoi_cells
-from voronoi_to_delauney import generate_quadrants
+from voronoi_to_delauney import generate_quadrants, run_delauney
 
 class TurtleDrawing:
     def __init__(self, name, vertices, line_width=5, line_colour="black", spawn_draw=False):
@@ -45,9 +45,16 @@ def compute_square_vertices(quadrant):
     ]
 
 
+
+def draw_delauney_cells(shape_vertices):
+    """Queue Delauney cell drawing operations."""
+    for i, vertices in enumerate(shape_vertices):
+        graphics.put(lambda v=vertices, idx=i: TurtleDrawing("delauney_" + str(idx), v, 1, "green", True))
+
+
+
 def draw_voronoi_cells(shape_vertices):
     """Queue Voronoi cell drawing operations."""
-    #Force draw first cell because of weird bug with it drawing last
     for i, vertices in enumerate(shape_vertices):
         graphics.put(lambda v=vertices, idx=i: TurtleDrawing("voronoi_" + str(idx), v, 5, "black", True))
 
@@ -88,6 +95,13 @@ def process_queue():
 def plot_voronoi(shape_vertices):
     """Start Voronoi cell plotting."""
     thread = threading.Thread(target=draw_voronoi_cells, args=(shape_vertices,))
+    thread.daemon = True
+    thread.start()
+
+
+def plot_delauney(shape_vertices):
+    """Start Voronoi cell plotting."""
+    thread = threading.Thread(target=draw_delauney_cells, args=(shape_vertices,))
     thread.daemon = True
     thread.start()
 
@@ -138,27 +152,29 @@ def generate_data():
     """Generate Voronoi cells, seed points, and quadrants."""
     try:
         voronoi_data, seed_points = generate_voronoi_cells(
-            x_range=X_RANGE, y_range=Y_RANGE, num_points=300, 
-            offset_x=-X_RANGE/2, offset_y=-Y_RANGE/2, distribution_method="halton"
+            x_range=X_RANGE, y_range=Y_RANGE, num_points=15, 
+            offset_x=-X_RANGE/2, offset_y=-Y_RANGE/2, distribution_method="fibonacci"
         )
         # Choose a distribution method
         #"halton":
         #"fibonacci"
+        #"fibonacci_segments"
         #"poisson"
         #"random"
         
-        quadrants = generate_quadrants(voronoi_data)
-        return voronoi_data, seed_points, quadrants
+        quadrants, delauney_triangles = run_delauney(voronoi_data, seed_points)
+        return voronoi_data, seed_points, quadrants, delauney_triangles
     except Exception as e:
         print(f"Error generating data: {e}")
         return [], [], []
 
 
-def plot_graphics(voronoi_data, seed_points, quadrants):
+def plot_graphics(voronoi_data, seed_points, quadrants, delauney_triangles):
     """Plot seed points, Voronoi cells, and quadrants."""
     plot_seed_points(seed_points)
     plot_voronoi(voronoi_data)
-    plot_quadrants(quadrants)
+    #plot_quadrants(quadrants)
+    plot_delauney(delauney_triangles)
 
 
 def main():
@@ -168,10 +184,10 @@ def main():
     compute_window_size()
 
     # Generate Data
-    voronoi_data, seed_points, quadrants = generate_data()
+    voronoi_data, seed_points, quadrants, delauney_triangles = generate_data()
 
     # Start plots
-    plot_graphics(voronoi_data, seed_points, quadrants)
+    plot_graphics(voronoi_data, seed_points, quadrants, delauney_triangles)
 
     # Start queue processing
     process_queue()

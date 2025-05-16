@@ -30,6 +30,7 @@ def generate_voronoi_cells(x_range, y_range, num_points, offset_x=0, offset_y=0,
     distributions = {
         "halton": point_generator.halton_samples,
         "fibonacci": point_generator.fibonacci_spiral,
+        "fibonacci_segments": point_generator.fibonacci_spiral_segments,
         "poisson": point_generator.poisson_disk_samples,
         "random": point_generator.random_distribution
     }
