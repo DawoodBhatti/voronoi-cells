@@ -139,7 +139,7 @@ class cell_conversion:
         #loop through cells
         for i in self.cell_number:
             self.calculate_non_boundary_edges(i, x_max, x_min, y_max, y_min)
-            self.calculate_voronoi_quadrant(i, self.quadrants, x_min, y_min)
+            self.calculate_voronoi_quadrant(i, self.quadrants)
             
     
     # determine how many edges cell, i, shares with other cells, not including the bounding quadrilateral (defined by x_max, x_min, y_max, y_min)
@@ -147,9 +147,9 @@ class cell_conversion:
         edge_number = len(self.cells[i])
             
         #loop through each edge, i.e. creating co-ordinate pairs and join last point with the first
+        boundary_edges = 0
         for j in range(len(self.cells[i])):
-            boundary_edges = 0
-                
+                        
             vertex1=self.cells[i][j]
             if j<len(self.cells[i])-1:
                 vertex2 = self.cells[i][j+1]
@@ -166,19 +166,15 @@ class cell_conversion:
             if avg_x == x_max or avg_x == x_min or avg_y == y_max or avg_y == y_min:
                 boundary_edges = 1
                 
-            #if we find a double match we have a corner therefore 2 boundary edges
-            if (avg_x == x_max or avg_x == x_min) and (avg_y == y_max or avg_y == y_min):
+            #if we find a corner we therefore 2 boundary edges
+            if ((vertex1[0] == x_max and vertex1[1] == y_max) or 
+                (vertex1[0] == x_max and vertex1[1] == y_min) or
+                (vertex1[0] == x_min and vertex1[1] == y_max) or
+                (vertex1[0] == x_min and vertex1[1] == y_min)):
                 boundary_edges = 2
                 break
             
-        # print("")
-        # print("cell vertices", self.cells[i])
-        # print("edge_number:" , edge_number)
-        # print("boundary_edges:" , edge_number)
-        # print("x_max:", x_max)
-        # print("x_min", x_min)
-        # print("y_max:", y_max)
-        # print("y_min", y_min)
+        #print("cell: ", i, " has this many unmatched edges: ", edge_number - boundary_edges)
         
         non_boundary_edges = (edge_number - boundary_edges)
         self.cell_unmatched_edges.append(non_boundary_edges)
@@ -186,17 +182,37 @@ class cell_conversion:
 
     # given a cell's seed point calculate which quadrant (u,v) it falls in
     # and append voronoi cell number to that quadrant's list of contained points
-    def calculate_voronoi_quadrant(self, i, quadrants, x_min, y_min):
+    def calculate_voronoi_quadrant(self, i, quadrants):
         quadrant_length = quadrants[0][0].length
         
-        #shift co-ordinates so bottom left point is at (0,0)
-        x=self.get_seed_point(i)[0] - x_min
-        y=self.get_seed_point(i)[1] - y_min
+        x=self.get_seed_point(i)[0] 
+        y=self.get_seed_point(i)[1] 
         u = 0
         v = 0
         
-        u = int((x // quadrant_length) - 1)
-        v = int((y // quadrant_length) - 1)
+        quadrant_min_x = quadrants[0][0].midpoint[0] + quadrants[0][0].length/2
+        quadrant_max_x = quadrants[-1][-1].midpoint[0] - quadrants[0][0].length/2
+        quadrant_min_y = quadrants[0][0].midpoint[1] + quadrants[0][0].length/2
+        quadrant_max_y = quadrants[-1][-1].midpoint[1] - quadrants[0][0].length/2
+
+
+        #to avoid partial quadrant offset problem we manually determine first and last buckets
+        if x < quadrant_min_x:
+            u = 0
+        elif x > quadrant_max_x:
+            u = -1
+        #and remainder divide can be used to determine intermediary quadrants
+        else:
+            u = 1 + int((x - quadrant_min_x) // quadrant_length)             
+
+        #to avoid partial quadrant  problem we manually determine first and last buckets
+        if y < quadrant_min_y:
+            v = 0
+        elif y > quadrant_max_y:
+            v = -1
+        #and remainder divide can be used to determine intermediary quadrants
+        else:
+            v = 1 + int((y - quadrant_min_y) // quadrant_length) 
         
         quadrants[u][v].contained_cells.append(i)
         
@@ -222,19 +238,32 @@ class cell_conversion:
 
                         #loop over the neighbouring quadrants (including quadrant which contains cell "i")
                         loop_quadrants = [q.position]+q.neighbours
+                        print(i, " is looping over these quadrants: ", loop_quadrants )
+                        print(i, " is trying to find this many matches: ", self.cell_unmatched_edges[i])
+                        print("")
+                        
                         for (x,y) in loop_quadrants:
+                            print("    working with quadrant[", x,"][",y,"]")
+                            print("    and these are the cells in them: ")
+                            print("    ", self.quadrants[x][y].contained_cells)
+                            print("")
                             quadrant = self.quadrants[x][y]
                             
-                            if len(self.cell_neighbours[i]) == self.cell_unmatched_edges[i]:
+                            if self.cell_unmatched_edges[i] == 0:
+                                print("***************breaking looks like we have everything")
                                 break                              
                             
                             for c in quadrant.contained_cells:
-                                
+                                print("cell: ", i, "trying to match with this cell: ", c)
                                 #avoid comparing voronoi cell to itself
                                 if i == c:
+                                    print("        skipping self comparison")
+                                    print("")
                                     pass
                                 #avoid comparing voronoi cell to existing neighbours
                                 elif i in (self.cell_neighbours[c]):
+                                    print("        skipping existing neighbour")
+                                    print("")
                                     pass
                                 else:
                                     #scan neighbour's vertices to look for a match
@@ -249,6 +278,11 @@ class cell_conversion:
                                         if ((vertex1 == nvertex1 and vertex2 == nvertex2) or
                                             (vertex1 == nvertex2 and vertex2 == nvertex1)):
                                             
+                                            print("        matched edge with cell: ", i)
+                                            print("        these are its current neighbours: ", self.cell_neighbours[i])
+                                            print("        this is how many unmatched edges: ", self.cell_unmatched_edges[i])
+                                            print("        this will be the latest addition: ", c)
+                                            
                                             #update class info for both matches
                                             self.cell_neighbours[i].append(c)
                                             self.cell_neighbours[c].append(i)
@@ -257,6 +291,13 @@ class cell_conversion:
                                             
                                             #nothing more to be found between these two 
                                             break
+                                        else:
+                                            print("vertex1:", vertex1)
+                                            print("vertex2:", vertex2)
+                                            print("nvertex1 ", nvertex1)
+                                            print("nvertex2 ", nvertex2)
+                                            print("        no edge matches found for cell: ", c)
+                                            print("")
                 
                 
     #converts list of cell neighbours into plottable co-ordinates representing
@@ -298,7 +339,7 @@ class cell_conversion:
             
         #ensure unique triangles in delauney set
         delauney_set = [elt for sl in delauney_set for elt in sl]
-        #delauney_set=list(set(tuple(sorted(l)) for l in delauney_set))
+        delauney_set=list(set(tuple(sorted(l)) for l in delauney_set))
 
         #replace the numbers in delauney_set with the seedpoints of these cells
         for i, elements in enumerate(delauney_set):
@@ -322,6 +363,10 @@ def run_delauney(voronoi_data, seed_points):
     #calculate delauney triangles
     delauney_triangles = conversion.return_delauney_points()
     print("not done yet still need to fix the missing neighbour cells...?")
+    
+    #i think the quadrants generate fine
+    
+    #i think the sorting of points into quadrants is wrong?
     
     return quadrants, delauney_triangles
 

@@ -45,32 +45,29 @@ def compute_square_vertices(quadrant):
     ]
 
 
-
 def draw_delauney_cells(shape_vertices):
     """Queue Delauney cell drawing operations."""
     for i, vertices in enumerate(shape_vertices):
         graphics.put(lambda v=vertices, idx=i: TurtleDrawing("delauney_" + str(idx), v, 1, "green", True))
 
 
-
 def draw_voronoi_cells(shape_vertices):
     """Queue Voronoi cell drawing operations."""
     for i, vertices in enumerate(shape_vertices):
         graphics.put(lambda v=vertices, idx=i: TurtleDrawing("voronoi_" + str(idx), v, 5, "black", True))
+        
 
-
-def draw_seed_points(seed_points):
-    """Queue seed points for threaded drawing."""
-    for x, y in seed_points:
-        graphics.put(lambda x=x, y=y: draw_single_seed_point(x, y))
-
-
-def draw_single_seed_point(x, y):
+def draw_single_seed_point(x, y, name=None):
     """Draw an individual seed point using global (invisible) seed turtle."""
     seed_turtle.penup()
     seed_turtle.goto(x, y)
     seed_turtle.pendown()
     seed_turtle.dot(5)
+
+    if name is not None:
+        seed_turtle.penup()
+        seed_turtle.write(name, align="center", font=("Arial", 12, "bold"))
+        seed_turtle.pendown()
 
 
 def draw_quadrants(quadrants):
@@ -108,8 +105,8 @@ def plot_delauney(shape_vertices):
 
 def plot_seed_points(seed_points):
     """Queue seed points for threaded drawing."""
-    for x, y in seed_points:
-        graphics.put(lambda x=x, y=y: draw_single_seed_point(x, y))
+    for i, (x, y) in enumerate(seed_points):
+        graphics.put(lambda x=x, y=y, i=i: draw_single_seed_point(x, y, name=i))
 
 
 def plot_quadrants(quadrants):
@@ -152,7 +149,7 @@ def generate_data():
     """Generate Voronoi cells, seed points, and quadrants."""
     try:
         voronoi_data, seed_points = generate_voronoi_cells(
-            x_range=X_RANGE, y_range=Y_RANGE, num_points=15, 
+            x_range=X_RANGE, y_range=Y_RANGE, num_points=48, 
             offset_x=-X_RANGE/2, offset_y=-Y_RANGE/2, distribution_method="fibonacci"
         )
         # Choose a distribution method
@@ -172,7 +169,7 @@ def generate_data():
 def plot_graphics(voronoi_data, seed_points, quadrants, delauney_triangles):
     """Plot seed points, Voronoi cells, and quadrants."""
     plot_seed_points(seed_points)
-    plot_voronoi(voronoi_data)
+    #plot_voronoi(voronoi_data)
     #plot_quadrants(quadrants)
     plot_delauney(delauney_triangles)
 
