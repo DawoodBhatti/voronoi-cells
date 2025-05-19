@@ -238,32 +238,19 @@ class cell_conversion:
 
                         #loop over the neighbouring quadrants (including quadrant which contains cell "i")
                         loop_quadrants = [q.position]+q.neighbours
-                        print(i, " is looping over these quadrants: ", loop_quadrants )
-                        print(i, " is trying to find this many matches: ", self.cell_unmatched_edges[i])
-                        print("")
                         
                         for (x,y) in loop_quadrants:
-                            print("    working with quadrant[", x,"][",y,"]")
-                            print("    and these are the cells in them: ")
-                            print("    ", self.quadrants[x][y].contained_cells)
-                            print("")
                             quadrant = self.quadrants[x][y]
                             
                             if self.cell_unmatched_edges[i] == 0:
-                                print("***************breaking looks like we have everything")
                                 break                              
                             
                             for c in quadrant.contained_cells:
-                                print("cell: ", i, "trying to match with this cell: ", c)
                                 #avoid comparing voronoi cell to itself
                                 if i == c:
-                                    print("        skipping self comparison")
-                                    print("")
                                     pass
                                 #avoid comparing voronoi cell to existing neighbours
                                 elif i in (self.cell_neighbours[c]):
-                                    print("        skipping existing neighbour")
-                                    print("")
                                     pass
                                 else:
                                     #scan neighbour's vertices to look for a match
@@ -277,12 +264,7 @@ class cell_conversion:
                                         #on match update info for both cells i and c
                                         if ((vertex1 == nvertex1 and vertex2 == nvertex2) or
                                             (vertex1 == nvertex2 and vertex2 == nvertex1)):
-                                            
-                                            print("        matched edge with cell: ", i)
-                                            print("        these are its current neighbours: ", self.cell_neighbours[i])
-                                            print("        this is how many unmatched edges: ", self.cell_unmatched_edges[i])
-                                            print("        this will be the latest addition: ", c)
-                                            
+
                                             #update class info for both matches
                                             self.cell_neighbours[i].append(c)
                                             self.cell_neighbours[c].append(i)
@@ -292,12 +274,7 @@ class cell_conversion:
                                             #nothing more to be found between these two 
                                             break
                                         else:
-                                            print("vertex1:", vertex1)
-                                            print("vertex2:", vertex2)
-                                            print("nvertex1 ", nvertex1)
-                                            print("nvertex2 ", nvertex2)
-                                            print("        no edge matches found for cell: ", c)
-                                            print("")
+                                            pass
                 
                 
     #converts list of cell neighbours into plottable co-ordinates representing
@@ -309,29 +286,18 @@ class cell_conversion:
         #find sets of 3 neighbouring cells
         for i in range(0,len(neighbours)):
             matches = []
-            # print("working with: ", i)
             
             cell_neighbours = neighbours[i]
-            # print(cell_neighbours)
-            # print("")
 
             for j in cell_neighbours:
                 if i != j:
-                    # print("     working with: ", j)
-                    # print("     ", neighbours[j])
-                    # print("")
-    
+                    
                     for k in neighbours[j]:
                         if i != k:
-                            # print("          working with: ", k)
-                            # print("          ", neighbours[k])
-                            # print("")
         
                             for l in neighbours[k]:
                                 if i ==l:
-                                    # print("          looks like a match so let's add it?")
-                                    # print("          match: i, j, k = (", i, ", ", j, ", ", k, ")")
-                                    # print("")
+
                                     matches.append((i,j,k))
                 
             matches=list(set(tuple(sorted(l)) for l in matches))
@@ -362,7 +328,6 @@ def run_delauney(voronoi_data, seed_points):
     
     #calculate delauney triangles
     delauney_triangles = conversion.return_delauney_points()
-    print("not done yet still need to fix the missing neighbour cells...?")
     
     #i think the quadrants generate fine
     

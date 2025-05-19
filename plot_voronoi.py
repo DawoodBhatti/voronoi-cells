@@ -64,10 +64,10 @@ def draw_single_seed_point(x, y, name=None):
     seed_turtle.pendown()
     seed_turtle.dot(5)
 
-    if name is not None:
-        seed_turtle.penup()
-        seed_turtle.write(name, align="center", font=("Arial", 12, "bold"))
-        seed_turtle.pendown()
+    # if name is not None:
+    #     seed_turtle.penup()
+    #     seed_turtle.write(name, align="center", font=("Arial", 12, "bold"))
+    #     seed_turtle.pendown()
 
 
 def draw_quadrants(quadrants):
@@ -149,8 +149,8 @@ def generate_data():
     """Generate Voronoi cells, seed points, and quadrants."""
     try:
         voronoi_data, seed_points = generate_voronoi_cells(
-            x_range=X_RANGE, y_range=Y_RANGE, num_points=48, 
-            offset_x=-X_RANGE/2, offset_y=-Y_RANGE/2, distribution_method="fibonacci"
+            x_range=X_RANGE, y_range=Y_RANGE, num_points=4800, 
+            offset_x=-X_RANGE/2, offset_y=-Y_RANGE/2, distribution_method="fibonacci_segments"
         )
         # Choose a distribution method
         #"halton":
