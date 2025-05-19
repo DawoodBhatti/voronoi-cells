@@ -48,7 +48,7 @@ def compute_square_vertices(quadrant):
 def draw_delauney_cells(shape_vertices):
     """Queue Delauney cell drawing operations."""
     for i, vertices in enumerate(shape_vertices):
-        graphics.put(lambda v=vertices, idx=i: TurtleDrawing("delauney_" + str(idx), v, 1, "green", True))
+        graphics.put(lambda v=vertices, idx=i: TurtleDrawing("delauney_" + str(idx), v, 3, "green", True))
 
 
 def draw_voronoi_cells(shape_vertices):
@@ -149,8 +149,8 @@ def generate_data():
     """Generate Voronoi cells, seed points, and quadrants."""
     try:
         voronoi_data, seed_points = generate_voronoi_cells(
-            x_range=X_RANGE, y_range=Y_RANGE, num_points=4800, 
-            offset_x=-X_RANGE/2, offset_y=-Y_RANGE/2, distribution_method="fibonacci_segments"
+            x_range=X_RANGE, y_range=Y_RANGE, num_points=150, 
+            offset_x=-X_RANGE/2, offset_y=-Y_RANGE/2, distribution_method="fibonacci"
         )
         # Choose a distribution method
         #"halton":
@@ -169,8 +169,8 @@ def generate_data():
 def plot_graphics(voronoi_data, seed_points, quadrants, delauney_triangles):
     """Plot seed points, Voronoi cells, and quadrants."""
     plot_seed_points(seed_points)
-    #plot_voronoi(voronoi_data)
-    #plot_quadrants(quadrants)
+    plot_voronoi(voronoi_data)
+    plot_quadrants(quadrants)
     plot_delauney(delauney_triangles)
 
 

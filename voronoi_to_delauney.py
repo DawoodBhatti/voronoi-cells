@@ -1,5 +1,7 @@
 from math import ceil, sqrt
 from numpy import zeros, empty
+from collections import OrderedDict
+
 
 # calculate the delauney triangulation of a dataset given the voronoi cells
 # as this conversion should(?) be faster than recalculating the delauney set from scratch
@@ -219,9 +221,7 @@ class cell_conversion:
     
     # map the set of voronoi cells to an equivalent set of delauney triangles by finding and connecting the seed points of neighbouring voronoi cells
     def calculate_delauney(self):
-        u = self.quadrants.shape[0]
-        v = self.quadrants.shape[1]
-        
+
         # loop over all voronoi cells
         for cols in self.quadrants:    
             for q in cols:
@@ -282,41 +282,33 @@ class cell_conversion:
     def return_delauney_points(self):
         neighbours = self.cell_neighbours.copy()
         delauney_set = []
-
-        #find sets of 3 neighbouring cells
-        for i in range(0,len(neighbours)):
+        seen_triangles = OrderedDict() # maintains insertion order
+    
+        # find sets of 3 neighbouring cells
+        for i in range(len(neighbours)):
             matches = []
-            
             cell_neighbours = neighbours[i]
-
+    
             for j in cell_neighbours:
                 if i != j:
-                    
                     for k in neighbours[j]:
                         if i != k:
-        
                             for l in neighbours[k]:
-                                if i ==l:
-
-                                    matches.append((i,j,k))
-                
-            matches=list(set(tuple(sorted(l)) for l in matches))
-            delauney_set.append(matches)
-            
-        #ensure unique triangles in delauney set
-        delauney_set = [elt for sl in delauney_set for elt in sl]
-        delauney_set=list(set(tuple(sorted(l)) for l in delauney_set))
-
-        #replace the numbers in delauney_set with the seedpoints of these cells
+                                if i == l:
+                                    triangle = tuple(sorted((i, j, k)))
+                                    if triangle not in seen_triangles:
+                                        seen_triangles[triangle] = True
+                                        matches.append(triangle)
+                    
+            delauney_set.extend(matches) # preserve loop order
+    
+        # replace the numbers in delauney_set with the seedpoints of these cells
         for i, elements in enumerate(delauney_set):
-            v1= delauney_set[i][0]
-            v2= delauney_set[i][1]
-            v3= delauney_set[i][2]
-            delauney_set[i]=[self.seed_points[v1],
-                             self.seed_points[v2], 
-                             self.seed_points[v3]]
-        
+            v1, v2, v3 = elements
+            delauney_set[i] = [self.seed_points[v1], self.seed_points[v2], self.seed_points[v3]]
+    
         return delauney_set
+    
 
 
 def run_delauney(voronoi_data, seed_points):
