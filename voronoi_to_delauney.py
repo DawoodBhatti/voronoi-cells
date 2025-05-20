@@ -114,7 +114,6 @@ class cell_conversion:
         #calculate delauney triangles on class initialisation
         self.calculate_properties()
         self.calculate_delauney()
-        print("bing ching")
     
     
     # return seed point co-ords of nth voronoi cell (x,y) 
