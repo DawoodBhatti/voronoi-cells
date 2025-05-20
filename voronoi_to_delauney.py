@@ -328,4 +328,11 @@ def run_delauney(voronoi_data, seed_points):
     return quadrants, delauney_triangles
 
 
+#TODO: there is a small bug that occurs when running the halton distribution at 250 points
+# if you plot the quadrants and the delauney cells you can see a gap appears 
+# which is because the neighbour cells don't fall in neighbouring quadrants. 
+# could fix this by making the quadrants bigger (which would slow down the program)
+# OR by extending the search to look at further quadrants if we don't find matches
 
+#TODO: also a strange gap caused by fibonacci segments with n=3. not sure why but doesn't 
+#matter too much :)

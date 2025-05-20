@@ -38,7 +38,7 @@ class PointGenerator:
         return self.apply_offset(sample_points)  # Apply offset here
 
 
-    def fibonacci_spiral_segments(self, n=33):
+    def fibonacci_spiral_segments(self, n=3):
         """Return every nth point from the Fibonacci spiral sequence"""
         points = self.fibonacci_spiral()
         return [ points[i] for i in range(0,len(points)) if i%n == 0 ]
