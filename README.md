@@ -3,7 +3,7 @@
 - honeycomb.py: standalone program to display some nested hexagons
 - quadcircles.py: standalone program with some cool lil circles
 - turtle_plotting.py: standalone program with basic plotting at work
-- plot_voronoi.py: black and white voronoi diagram plotting!
+- plot_voronoi.py: voronoi diagram plotting with seed points with a conversion to the equivalent delauney triangulation
 
 experiments with voronoi cells in python with inspiration below
 
